@@ -1,7 +1,5 @@
 # Procesa datos de Cusco teniendo como input los archivos Excel
 # que resultan de haber filtrado las ANP
-# ...
-# Archivo trabajado en la Desktop
 
 rm(list = ls())
 setwd("/Users/davidorosco1/RenovaSolaris/Procesa_Cusco")
