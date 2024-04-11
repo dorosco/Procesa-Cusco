@@ -2,8 +2,6 @@
 # que resultan de haber filtrado las ANP
 # 
 # **** Incluye la diferenciación de distritos que pertenecen a Ley de Amazonia *****
-# ...
-# Archivo trabajado en la Desktop
 
 rm(list = ls())
 setwd("/Users/davidorosco1/RenovaSolaris/Procesa_Cusco")
@@ -118,9 +116,9 @@ data_concesion <- data_teste %>%
 ind_oriental <- which(data_concesion$LEYAMAZONIA == "TRUE")
 data_concesion$ENORIENTAL[ind_oriental] = TRUE
 
-mcantidad <- sum(data_concesion$ENORIENTAL)
+# Trabajado en Laptop 
+# Incorpora todos las viviendas de las provincias amazonicas
 
-# ADICIONAL EL TOTAL DE VIVIENDAS DE LAS PROVINCIAS LIMITROFES CON AMAZONAS" 
 ind_oriental <- which(data_concesion$PROVINCIA == "CALCA")
 data_concesion$ENORIENTAL[ind_oriental] = TRUE
 
@@ -131,28 +129,76 @@ ind_oriental <- which(data_concesion$PROVINCIA == "QUISPICANCHI")
 data_concesion$ENORIENTAL[ind_oriental] = TRUE
 
 mcantidad <- sum(data_concesion$ENORIENTAL)
-# > 34,155 viviendas
+# > 34,155
 
-# Calcular la cantidad de usuarios por localidad, distrito y provincia
+# Incorpora las adicionales no amazonicas
 
-users_by_localidad <- data_concesion %>%
+ind_oriental <- which(data_concesion$PROVINCIA == "ACOMAYO")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+ind_oriental <- which(data_concesion$PROVINCIA == "ANTA")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+ind_oriental <- which(data_concesion$PROVINCIA == "CANCHIS")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+ind_oriental <- which(data_concesion$PROVINCIA == "CHUMBIVILCAS")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+ind_oriental <- which(data_concesion$PROVINCIA == "CUSCO")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+ind_oriental <- which(data_concesion$PROVINCIA == "PARURO")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+ind_oriental <- which(data_concesion$PROVINCIA == "URUBAMBA")
+data_concesion$ENORIENTAL[ind_oriental] = TRUE
+
+mcantidad <- sum(data_concesion$ENORIENTAL)
+# > 58,579
+
+
+# Separa la data en una para cada concesion
+#
+data_oriental <- data_concesion %>%
+  filter(ENORIENTAL == TRUE) %>%
   group_by(PROVINCIA, DISTRITO, LOCALIDAD) %>%
-  summarise(
-    q_users = n()
-  )
+  summarise( q_users = n())
 
-users_by_distrito <- users_by_localidad %>%
+data_renova <- data_concesion %>%
+  filter(ENORIENTAL == FALSE) %>%
+  group_by(PROVINCIA, DISTRITO, LOCALIDAD) %>%
+  summarise( q_users = n())
+
+mtot_oriental <- sum(data_oriental$q_users)
+# > 58,579
+mtot_renova <- sum(data_renova$q_users)
+# > 24163
+
+WriteXLS(data_renova, "data_renova.xlsx")
+WriteXLS(data_oriental, "data_oriental.xlsx")
+
+
+# Estimacion de la cantidad de usuarios por distrito y provincia
+
+oriental_users_by_distrito <- data_oriental %>%
   group_by(PROVINCIA, DISTRITO) %>%
-  summarise(
-    q_users = sum(q_users)
-  )
+  summarise( q_users = sum(q_users))
+WriteXLS(oriental_users_by_distrito, "oriental_users_by_distrito.xlsx")
 
-users_by_provincia <- users_by_distrito %>%
+
+oriental_users_by_provincia <- oriental_users_by_distrito %>%
   group_by(PROVINCIA) %>%
-  summarise(
-    q_users = sum(q_users)
-  )
+  summarise( q_users = sum(q_users))
+WriteXLS(oriental_users_by_provincia, "oriental_users_by_provincia.xlsx")
 
-WriteXLS(users_by_provincia, "users_by_provincia.xlsx")
-WriteXLS(users_by_distrito, "users_by_distrito.xlsx")
-WriteXLS(users_by_localidad, "users_by_localidad.xlsx")
+renova_users_by_distrito <- data_renova %>%
+  group_by(PROVINCIA, DISTRITO) %>%
+  summarise( q_users = sum(q_users))
+WriteXLS(renova_users_by_distrito, "renova_users_by_distrito.xlsx")
+
+renova_users_by_provincia <- renova_users_by_distrito %>%
+  group_by(PROVINCIA) %>%
+  summarise( q_users = sum(q_users))
+WriteXLS(renova_users_by_provincia, "renova_users_by_provincia.xlsx")
+
