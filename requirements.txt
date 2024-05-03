@@ -1,4 +1,3 @@
-envDocument==2.4.1
 viridis==0.6.5
 viridisLite==0.4.2
 lubridate==1.9.3
