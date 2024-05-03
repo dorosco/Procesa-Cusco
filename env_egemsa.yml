@@ -1,0 +1,11 @@
+name: r_egemsa
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-ggplot2=3.5.1
+  - notebook
+  - r-base=4.3.3
+  - r-essentials
+  - r-viridis
+prefix: /Users/davidorosco1/anaconda3/envs/r_egemsa
